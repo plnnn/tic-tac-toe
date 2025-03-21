@@ -79,3 +79,17 @@ html, body {
   font-size: 18px;
   cursor: pointer;
 }
+
+.button-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.button-column button {
+  padding: 10px 20px;
+  font-size: 18px;
+  cursor: pointer;
+  width: 250px
+}

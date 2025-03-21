@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
+import { calculateWinner } from './BoardUtility';
+import { bestMove as miniMaxBestMove } from './MiniMax';
+import { randomMove } from './RandomMoves';
+import { bestMove as ruleBasedBestMove } from './RuleBased';
 import './App.css';
 
 function App() {
   const [board, setBoard] = useState(Array(9).fill(null));
   const [isXNext, setIsXNext] = useState(true);
   const [gameStarted, setGameStarted] = useState(false);
-  const [gameMode, setGameMode] = useState(null); // null, 'friend', or 'ai'
+  const [gameMode, setGameMode] = useState(null);
 
   const handleClick = (index) => {
     if (board[index] || calculateWinner(board)) return;
@@ -15,12 +19,19 @@ function App() {
     setBoard(newBoard);
     setIsXNext(!isXNext);
 
-    if (gameMode === 'ai' && !calculateWinner(newBoard)) {
+    if (gameMode.startsWith('ai') && !calculateWinner(newBoard)) {
       setTimeout(() => {
-        const aiMove = bestMove(newBoard);
+        let aiMove;
+        if (gameMode === 'ai_random') aiMove = randomMove(newBoard);
+        else if (gameMode === 'ai_rule_based') aiMove = ruleBasedBestMove(newBoard);
+        else if (gameMode === 'ai_mini_max') aiMove = miniMaxBestMove(newBoard);
+
         if (aiMove !== -1) {
-          newBoard[aiMove] = 'O';
-          setBoard([...newBoard]);
+          setBoard((prevBoard) => {
+            const updatedBoard = prevBoard.slice();
+            updatedBoard[aiMove] = 'O';
+            return updatedBoard;
+          });
           setIsXNext(true);
         }
       }, 300);
@@ -58,6 +69,17 @@ function App() {
             Play with AI
           </button>
         </div>
+      ) : gameMode === 'ai' ? (
+        <div className="ai-selection">
+          <div className="button-column">
+            <h2>Select AI Mode</h2>
+            <button onClick={() => setGameMode('ai_random')}>Random Moves</button>
+            <button onClick={() => setGameMode('ai_rule_based')}>Rule-Based</button>
+            <button onClick={() => setGameMode('ai_mini_max')}>Mini-Max</button>
+            <button onClick={() => setGameMode('ai_alpha_beta')}>Alpha-Beta Pruning</button>
+            <button onClick={() => setGameMode('ai_monte_carlo')}>Monte Carlo Tree Search</button>
+          </div>
+        </div>
       ) : (
         <div>
           <div className="status">{status}</div>
@@ -76,61 +98,6 @@ function App() {
       )}
     </div>
   );
-}
-
-function calculateWinner(board) {
-  const lines = [
-    [0, 1, 2], [3, 4, 5], [6, 7, 8],
-    [0, 3, 6], [1, 4, 7], [2, 5, 8],
-    [0, 4, 8], [2, 4, 6]
-  ];
-
-  for (let [a, b, c] of lines) {
-    if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-      return board[a];
-    }
-  }
-  return null;
-}
-
-function minimax(newBoard, isMaximizing) {
-  const winner = calculateWinner(newBoard);
-  if (winner === 'X') return -1;
-  if (winner === 'O') return 1;
-  if (newBoard.every(cell => cell)) return 0;
-
-  let bestScore = isMaximizing ? -Infinity : Infinity;
-  let score;
-
-  for (let i = 0; i < 9; i++) {
-    if (!newBoard[i]) {
-      newBoard[i] = isMaximizing ? 'O' : 'X';
-      score = minimax(newBoard, !isMaximizing);
-      newBoard[i] = null;
-
-      bestScore = isMaximizing ? Math.max(score, bestScore) : Math.min(score, bestScore);
-    }
-  }
-  return bestScore;
-}
-
-function bestMove(board) {
-  let bestScore = -Infinity;
-  let move = -1;
-
-  for (let i = 0; i < 9; i++) {
-    if (!board[i]) {
-      board[i] = 'O';
-      let score = minimax(board, false);
-      board[i] = null;
-
-      if (score > bestScore) {
-        bestScore = score;
-        move = i;
-      }
-    }
-  }
-  return move;
 }
 
 export default App;
