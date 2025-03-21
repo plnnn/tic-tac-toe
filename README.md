@@ -28,4 +28,4 @@ A simple Tic Tac Toe game built with React that allows you to play against a fri
 1. Clone this repository to your local machine:
 
    ```bash
-   git clone https://github.com/yourusername/tic-tac-toe-react.git
+   git clone https://github.com/plnnn/tic-tac-toe-react.git
