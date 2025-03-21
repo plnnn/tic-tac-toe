@@ -23,14 +23,17 @@ class Node {
         return moves;
     }
   
-    getBestChild() {
+    getBestChild(C = Math.sqrt(2)) {
         let bestChild = null;
-        let bestWinRate = -Infinity;
+        let bestUCT = -Infinity;
 
         for (let child of this.children) {
             const winRate = child.wins / child.visits;
-            if (winRate > bestWinRate) {
-                bestWinRate = winRate;
+            const explorationTerm = C * Math.sqrt(Math.log(this.visits) / child.visits);
+            const uct = winRate + explorationTerm;
+
+            if (uct > bestUCT) {
+                bestUCT = uct;
                 bestChild = child;
             }
         }
