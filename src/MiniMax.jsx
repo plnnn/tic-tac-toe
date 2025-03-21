@@ -10,14 +10,13 @@ function minimax(board, isMaximizing) {
     let score;
   
     for (let i = 0; i < 9; i++) {
-      if (!board[i]) {
-        const newBoard = board.slice();
-        newBoard[i] = isMaximizing ? 'O' : 'X';
-        score = minimax(newBoard, !isMaximizing);
-        newBoard[i] = null;
-  
-        bestScore = isMaximizing ? Math.max(score, bestScore) : Math.min(score, bestScore);
-      }
+        if (!board[i]) {
+            const newBoard = board.slice();
+            newBoard[i] = isMaximizing ? 'O' : 'X';
+            score = minimax(newBoard, !isMaximizing);
+
+            bestScore = isMaximizing ? Math.max(score, bestScore) : Math.min(score, bestScore);
+        }
     }
     return bestScore;
 }
@@ -27,16 +26,16 @@ export function bestMove(board) {
     let move = -1;
   
     for (let i = 0; i < 9; i++) {
-      if (!board[i]) {
-        const newBoard = board.slice();
-        newBoard[i] = 'O';
-        let score = minimax(newBoard, false);
-  
-        if (score > bestScore) {
-          bestScore = score;
-          move = i;
+        if (!board[i]) {
+            const newBoard = board.slice();
+            newBoard[i] = 'O';
+            let score = minimax(newBoard, false);
+
+            if (score > bestScore) {
+                bestScore = score;
+                move = i;
+            }
         }
-      }
     }
     return move;
 }

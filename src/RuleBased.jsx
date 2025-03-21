@@ -21,11 +21,11 @@ export function bestMove(board) {
   
 function findWinningMove(board, player) {
     for (let i = 0; i < 9; i++) {
-      if (!board[i]) {
-        const tempBoard = [...board];
-        tempBoard[i] = player;
-        if (calculateWinner(tempBoard) === player) return i;
-      }
+        if (!board[i]) {
+            const tempBoard = [...board];
+            tempBoard[i] = player;
+            if (calculateWinner(tempBoard) === player) return i;
+        }
     }
     return -1;
   }
